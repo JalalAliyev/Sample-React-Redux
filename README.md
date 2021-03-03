@@ -1,70 +1,37 @@
-# Redux Essentials Tutorial Example
+# Redux Main Topics, Principles and Usage Patterns
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
+#🔴Async Logic and Data Fetching
+#🔺You can write reusable "selector" functions to encapsulate reading values from the Redux state
+Selectors are functions that get the Redux state as an argument, and return some data
+#🔺Redux uses plugins called "middleware" to enable async logic
+The standard async middleware is called redux-thunk, which is included in Redux Toolkit
+Thunk functions receive dispatch and getState as arguments, and can use those as part of async logic
+#🔺You can dispatch additional actions to help track the loading status of an API call
+The typical pattern is dispatching a "pending" action before the call, then either a "success" containing the data or a "failure" action containing the error
+Loading state should usually be stored as an enum, like 'idle' | 'loading' | 'succeeded' | 'failed'
+#🔺Redux Toolkit has a createAsyncThunk API that dispatches these actions for you
+createAsyncThunk accepts a "payload creator" callback that should return a Promise, and generates pending/fulfilled/rejected action types automatically
+Generated action creators like fetchPosts dispatch those actions based on the Promise you return
+You can listen for these action types in createSlice using the extraReducers field, and update the state in reducers based on those actions.
+Action creators can be used to automatically fill in the keys of the extraReducers object so the slice knows what actions to listen for.
 
-## Available Scripts
-
-In the project directory, you can run:
-
-### `yarn start`
-
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
-
-### `yarn test`
-
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+#🔴Performance and Normalizing Data
+#🔺Memoized selector functions can be used to optimize performance
+Redux Toolkit re-exports the createSelector function from Reselect, which generates memoized selectors
+Memoized selectors will only recalculate the results if the input selectors return new values
+Memoization can skip expensive calculations, and ensure the same result references are returned
+#🔺There are multiple patterns you can use to optimize React component rendering with Redux
+Avoid creating new object/array references inside of useSelector - those will cause unnecessary re-renders
+Memoized selector functions can be passed to useSelector to optimize rendering
+useSelector can accept an alternate comparison function like shallowEqual instead of reference equality
+Components can be wrapped in React.memo() to only re-render if their props change
+List rendering can be optimized by having list parent components read just an array of item IDs, passing the IDs to list item children, and retrieving items by ID in the children
+#🔺Normalized state structure is a recommended approach for storing items
+"Normalization" means no duplication of data, and keeping items stored in a lookup table by item ID
+Normalized state shape usually looks like {ids: [], entities: {}}
+#🔺Redux Toolkit's createEntityAdapter API helps manage normalized data in a slice
+Item IDs can be kept in sorted order by passing in a sortComparer option
+The adapter object includes:
+adapter.getInitialState, which can accept additional state fields like loading state
+Prebuilt reducers for common cases, like setAll, addMany, upsertOne, and removeMany
+adapter.getSelectors, which generates selectors like selectAll and selectById
