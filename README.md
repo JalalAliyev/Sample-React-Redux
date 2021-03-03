@@ -1,6 +1,7 @@
 # Redux Main Topics, Principles and Usage Patterns
 
 #🔴Async Logic and Data Fetching
+
 #🔺You can write reusable "selector" functions to encapsulate reading values from the Redux state
 Selectors are functions that get the Redux state as an argument, and return some data
 #🔺Redux uses plugins called "middleware" to enable async logic
@@ -16,6 +17,7 @@ You can listen for these action types in createSlice using the extraReducers fie
 Action creators can be used to automatically fill in the keys of the extraReducers object so the slice knows what actions to listen for.
 
 #🔴Performance and Normalizing Data
+
 #🔺Memoized selector functions can be used to optimize performance
 Redux Toolkit re-exports the createSelector function from Reselect, which generates memoized selectors
 Memoized selectors will only recalculate the results if the input selectors return new values
