@@ -1,6 +1,6 @@
 # Redux Main Topics, Principles and Usage Patterns
 
-#🔴Async Logic and Data Fetching
+#Async Logic and Data Fetching
 
 #🔺You can write reusable "selector" functions to encapsulate reading values from the Redux state
 Selectors are functions that get the Redux state as an argument, and return some data
